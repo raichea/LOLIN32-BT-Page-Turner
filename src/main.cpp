@@ -23,9 +23,6 @@
  *******************************************************************/
 #include <Arduino.h>
 
-// TODO:    Dump keypad library (or add two more switches?)
-//          Add battery voltage measurement and warning LED??
-
 // OFF is LOW for DOIT board, HIGH for LOLIN32, opposite for ON
 #define OFF HIGH
 #define ON LOW
