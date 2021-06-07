@@ -1,6 +1,6 @@
 I needed a page turner pedal for my tablet when playing music with friends. Buying one was too expensive so I made one with an ESP32. There are lots of examples around but the code is fairly trivial. I wanted a battery-powered one for use at gigs and jams and so used a board that allowed charging and monitoring of the battery.
 
-You can find STL files for the case I built it into at: 
+You can find STL files for the case I built it into at: https://www.thingiverse.com/thing:4880077
 
 I used the following components to complete the project:
 
