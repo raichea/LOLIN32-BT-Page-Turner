@@ -30,7 +30,9 @@
 #include <BleKeyboard.h>
 #include <Keypad.h>
 
-const byte battPin = 34;
+const byte BLE_DELAY = 10;  // Delay to prevent BT congestion
+
+const byte battPin = 34;    // 1/2 the battery voltage read on this pin
 
 // Could do this without the keypad library fairly simply but this allows easy expansion
 const byte ROWS = 1; // Just the one row
@@ -56,6 +58,7 @@ BleKeyboard bleKeyboard("BTPageTurner", "SteveRussell", 100);
 void ledState(byte state) {
   digitalWrite(LED_BUILTIN, state);
 }
+
 void setup() {
   // Serial.begin(115200);
   pinMode(LED_BUILTIN, OUTPUT);
@@ -65,12 +68,14 @@ void setup() {
 
 bool isBatteryLow() {
   const byte SAMPLE_COUNT = 16;
-  const int LOW_VOLTAGE = 1750;
+  const int HI_VOLTAGE = 2200;    // About 3.7V
+  const int LOW_VOLTAGE = 1750;   // About 3.0V
 
   static int samples[SAMPLE_COUNT];
   static byte ptr = 0;
+  static unsigned long updateTimer = 0;
 
-  int value = 0;
+  int batteryAvg = 0;
 
   // Get a reading from the ADC
   samples[ptr++] = analogRead(battPin);
@@ -78,17 +83,23 @@ bool isBatteryLow() {
 
   // Average the collected samples
   for (byte i = 0; i < SAMPLE_COUNT; i++){
-    value += samples[i];
+    batteryAvg += samples[i];
   }
-  value += SAMPLE_COUNT / 2;  // Make sure we round correctly
-  value /= SAMPLE_COUNT;
-  // Serial.printf("Battery: %d\n", value);
-  return value <= LOW_VOLTAGE ? true : false;
+  batteryAvg += SAMPLE_COUNT / 2;  // Make sure we round correctly
+  batteryAvg /= SAMPLE_COUNT;
+  // Serial.printf("Battery: %d\n", batteryAvg);
+
+  if (millis() - updateTimer > 1000) {
+    bleKeyboard.setBatteryLevel(batteryAvg >= HI_VOLTAGE ? 100 : 10 + 90 * (batteryAvg - LOW_VOLTAGE) / (HI_VOLTAGE - LOW_VOLTAGE));
+    delay(BLE_DELAY);
+    // Serial.printf("Battery: %d%%\n", 10 + 90 * (batteryAvg - LOW_VOLTAGE) / (HI_VOLTAGE - LOW_VOLTAGE));
+    updateTimer = millis();
+  }
+
+  return batteryAvg <= LOW_VOLTAGE ? true : false;
 }
 
 void loop() {
-  const byte BLE_DELAY = 10;  // Delay to prevent BT congestion
-
   static unsigned long flashTimer = 0;
 
   unsigned long current;
