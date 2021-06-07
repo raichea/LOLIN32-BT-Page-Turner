@@ -8,4 +8,6 @@ Pedal: https://www.aliexpress.com/item/32801886725.html
 
 ESP32: https://www.aliexpress.com/item/4000830795113.html
 
+Battery: https://www.aliexpress.com/item/1005001602175264.html
+
 Chassis mount USB extension: https://www.ebay.co.uk/itm/232481417132
